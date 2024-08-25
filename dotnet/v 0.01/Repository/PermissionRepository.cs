@@ -19,7 +19,7 @@ namespace Repository
             string query = @"DELETE [Permission] WHERE PermissionId = @permissionId";
             _connection.ExecuteQuery(query, new Dictionary<string, object>
             {
-                {"permissionId", id}
+                {"@permissionId", id}
             });
         }
 
@@ -39,7 +39,7 @@ namespace Repository
 
         public Permission? GetById(long id, bool populationChildern)
         {
-            string query = @"SELECT * FROM [Permission] WHERE PermissionId = @permssionId";
+            string query = @"SELECT * FROM [Permission] WHERE PermissionId = @permissionId";
             var parameters = new Dictionary<string, object>
             {
                 { "@permissionId", id }
@@ -52,16 +52,16 @@ namespace Repository
         {
             var query = @"
                     MERGE [Permission] AS tgt
-                    USING (SELECT @permissionId, @name) AS src(PermissionId, Name)
+                    USING (SELECT @permissionId, @name) AS src(PermissionId, Permission)
                         ON (tgt.PermissionId = src.PermissionId)
                     WHEN MATCHED
                         THEN
                             UPDATE
-                            SET Name = src.Name
+                            SET Permission = src.Permission
                     WHEN NOT MATCHED
                         THEN
-                            INSERT (Name)
-                            VALUES (src.Name)
+                            INSERT (Permission)
+                            VALUES (src.Permission)
                     OUTPUT inserted.*;";
 
             var parameters = new Dictionary<string, object>

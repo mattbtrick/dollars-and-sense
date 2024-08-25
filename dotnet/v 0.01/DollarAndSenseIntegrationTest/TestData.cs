@@ -41,6 +41,7 @@ namespace DollarAndSenseIntegrationTest
                    ,(-2, 'Test Update User')
                    ,(-3, 'Test Read Users')
                     ,(-4, 'Users with jobs')
+                    ,(-5, 'Permission to delete')
                 SET IDENTITY_INSERT [Permission] OFF";
 
             var rolePermissionSql = @"INSERT INTO RolePermission (RoleId, PermissionId)
