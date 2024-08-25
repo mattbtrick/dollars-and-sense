@@ -66,15 +66,28 @@ namespace Repository
                 , GetRolePermissionListFromReader) ?? new List<RolePermission>();
         }
 
+        public RolePermission? Get(long roleId, long permissionId)
+        {
+            string query = @"SELECT RoleId, PermissionId FROM [RolePermission] WHERE RoleId = @roleId AND PermissionId = @permissionId";
+
+            return _connection.ExecuteReaderAndMapResult<RolePermission>(query
+                , new Dictionary<string, object>
+                {
+                    {"@roleId", roleId}
+                    ,{"@permissionId", permissionId}
+                }
+                , GetRolePermissionFromReader);
+        }
+
         public RolePermission? Save(RolePermission jobAssignment)
         {
             var query = @"
                     IF NOT EXISTS(SELECT 1 FROM [RolePermission] WHERE RoleId = @roleId AND PermissionId = @permissionId)
                         INSERT INTO [RolePermission] (RoleId, PermissionId) VALUES (@roleId, @permissionId)
 
-                    SELECT RoleId, CompletionPermissionId 
+                    SELECT RoleId, PermissionId 
                     FROM [RolePermission] 
-                    WHERE RoleId = @roleId AND CompletionPermissionId = @permissionId
+                    WHERE RoleId = @roleId AND PermissionId = @permissionId
                     ";
 
             var parameters = new Dictionary<string, object>
@@ -83,7 +96,7 @@ namespace Repository
                 { "@permissionId", jobAssignment.PermissionId }
             };
 
-            return _connection.ExecuteReaderAndMapResult<RolePermission>(query, parameters, MapRolePermission);
+            return _connection.ExecuteReaderAndMapResult<RolePermission>(query, parameters, GetRolePermissionFromReader);
         }
 
         private IEnumerable<RolePermission> GetRolePermissionListFromReader(IDataReader reader)
@@ -105,7 +118,7 @@ namespace Repository
             };
         }
 
-        private RolePermission? GetJobAssignmentFromReader(IDataReader reader)
+        private RolePermission? GetRolePermissionFromReader(IDataReader reader)
         {
             if (reader == null)
             {

@@ -27,6 +27,8 @@ namespace DollarAndSenseIntegrationTest
                     (-1, 'Test Delete')
                    ,(-2, 'Test Update')
                    ,(-3, 'Test Read')
+                   ,(-4, 'Role for delete test')
+                   ,(-5, 'Role for delete test')
                 SET IDENTITY_INSERT [Role] OFF";
 
             var userRoleSql = @"INSERT INTO UserRole (RoleId, UserId)
@@ -48,7 +50,12 @@ namespace DollarAndSenseIntegrationTest
                 VALUES 
                     (-1, -1)
                    ,(-2, -2)
-                   ,(-3, -3)";
+                   ,(-3, -3)
+                   ,(-4, -3)
+                   ,(-4, -1)
+                   ,(-4, -5)
+                   ,(-5, -5)
+                   ,(-3, -5)";
 
             var expenseSql = @"SET IDENTITY_INSERT [Expense] ON
                 INSERT INTO Expense (ExpenseId, Expense, Description, Amount)
