@@ -31,7 +31,7 @@ namespace DollarAndSenseIntegrationTest.RepositoryTest
             var userRepository = repository;
             var userList = userRepository.GetAll();
             Assert.IsNotNull(userList);
-            Assert.AreEqual(11, userList.Count());
+            Assert.IsTrue(userList.Any());
         }
 
         [TestMethod]

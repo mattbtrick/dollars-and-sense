@@ -14,33 +14,69 @@ namespace Repository
             _connection = connection;
         }
 
-        public void DeleteById(long id)
+        public void DeleteByJobId(long jobId)
         {
             string query = @"DELETE [JobAssignment] WHERE JobId = @jobId";
             _connection.ExecuteQuery(query, new Dictionary<string, object>
             {
-                {"jobId", id}
+                {"jobId", jobId}
             });
         }
 
-        public IEnumerable<JobAssignment> GetAll()
+        public void DeleteByUserId(long userId)
         {
-            string query = @"SELECT JobId, UserId FROM [JobAssignment]";
+            string query = @"DELETE [JobAssignment] WHERE UserId = @userId";
+            _connection.ExecuteQuery(query, new Dictionary<string, object>
+            {
+                {"userId", userId}
+            });
+        }
+
+        public void Delete(JobAssignment jobAssignment)
+        {
+            string query = @"DELETE [JobAssignment] WHERE UserId = @userId AND JobId = @jobId";
+            _connection.ExecuteQuery(query, new Dictionary<string, object>
+            {
+                {"@userId", jobAssignment.UserId},
+                {"@jobId", jobAssignment.JobId}
+            });
+        }
+
+        public IEnumerable<JobAssignment> GetByJobId(long jobId)
+        {
+            string query = @"SELECT JobId, UserId FROM [JobAssignment] WHERE JobId = @jobId";
 
             return _connection.ExecuteReaderAndMapResult<IEnumerable<JobAssignment>>(query
-                , new Dictionary<string, object>()
+                , new Dictionary<string, object>
+                {
+                    {"@jobId", jobId}
+                }
                 , GetJobAssignmentListFromReader) ?? new List<JobAssignment>();
         }
 
-        public JobAssignment? GetById(long id)
+        public IEnumerable<JobAssignment> GetByUserId(long userId)
         {
-            string query = @"SELECT JobId, UserId FROM [JobAssignment] WHERE JobId = @jobId";
-            var parameters = new Dictionary<string, object>
-            {
-                { "jobId", id }
-            };
+            string query = @"SELECT JobId, UserId FROM [JobAssignment] WHERE UserId = @userId";
 
-            return _connection.ExecuteReaderAndMapResult<JobAssignment>(query, parameters, GetJobAssignmentFromReader);
+            return _connection.ExecuteReaderAndMapResult<IEnumerable<JobAssignment>>(query
+                , new Dictionary<string, object>
+                {
+                    {"@userId", userId}
+                }
+                , GetJobAssignmentListFromReader) ?? new List<JobAssignment>();
+        }
+
+        public JobAssignment? Get(long jobId, long userId)
+        {
+            string query = @"SELECT JobId, UserId FROM [JobAssignment] WHERE UserId = @userId AND JobId = @jobId";
+
+            return _connection.ExecuteReaderAndMapResult<JobAssignment>(query
+                , new Dictionary<string, object>
+                {
+                    {"@userId", userId},
+                    {"@jobId", jobId}
+                }
+                , GetJobAssignmentFromReader);
         }
 
         public JobAssignment? Save(JobAssignment jobAssignment)
@@ -93,6 +129,5 @@ namespace Repository
             }
             return null;
         }
-
     }
 }

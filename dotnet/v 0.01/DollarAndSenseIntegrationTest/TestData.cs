@@ -18,6 +18,7 @@ namespace DollarAndSenseIntegrationTest
                    ,(-3, 'Role', 'Test User')
                    ,(-4, 'Expense', 'Test User')
                    ,(-5, 'Job', 'Test User')
+                   ,(-6, 'Job 2', 'Test User')
                 SET IDENTITY_INSERT [User] OFF";
 
             var roleSql = @"SET IDENTITY_INSERT [Role] ON
@@ -39,6 +40,7 @@ namespace DollarAndSenseIntegrationTest
                     (-1, 'Test Delete User')
                    ,(-2, 'Test Update User')
                    ,(-3, 'Test Read Users')
+                    ,(-4, 'Users with jobs')
                 SET IDENTITY_INSERT [Permission] OFF";
 
             var rolePermissionSql = @"INSERT INTO RolePermission (RoleId, PermissionId)
@@ -63,17 +65,30 @@ namespace DollarAndSenseIntegrationTest
                    ,(-2, 'Test job 2', '$200 job', 200)
                    ,(-3, 'Test job 3', '$300 job instructions', 300)
                     ,(-4, 'Test job 4 Delete', '$400 job', 400)
+                    ,(-5, 'Job Linked to Users', 'Linked to users', 500)
+                    ,(-6, 'Job Linked to Users', 'Linked to users', 600)
                 SET IDENTITY_INSERT [Job] OFF";
 
             var jobAssignmentSql = @"INSERT INTO JobAssignment (JobId, UserId)
                 VALUES 
                     (-1, -5)
-                   ,(-2, -5)";
+                    ,(-1, -3)
+                    ,(-2, -5)
+                    ,(-3, -1)
+                    ,(-2, -2)
+                    ,(-1, -1)
+                    ,(-5, -5)
+                    ,(-6, -5)
+                    ,(-5, -6)
+                    ,(-6, -6)";
 
             var jobRuleSql = @"INSERT INTO JobRule (JobId, CompletionScheduleId)
                 VALUES 
                     (-1, 1)
-                   ,(-2, 2)";
+                   ,(-2, 2)
+                   ,(-5, 2)
+                   ,(-6, 2)
+                   ,(-5, 3)";
 
             var userExpenseSql = @"INSERT INTO UserExpense (UserId, ExpenseId, PaymentScheduleId)
                 VALUES 
