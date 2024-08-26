@@ -52,16 +52,16 @@ namespace Repository
         {
             var query = @"
                     MERGE [Role] AS tgt
-                    USING (SELECT @roleId, @name) AS src(RoleId, Name)
+                    USING (SELECT @roleId, @name) AS src(RoleId, Role)
                         ON (tgt.RoleId = src.RoleId)
                     WHEN MATCHED
                         THEN
                             UPDATE
-                            SET Name = src.Name
+                            SET Role = src.Role
                     WHEN NOT MATCHED
                         THEN
-                            INSERT (Name)
-                            VALUES (src.Name)
+                            INSERT (Role)
+                            VALUES (src.Role)
                     OUTPUT inserted.*;";
 
             var parameters = new Dictionary<string, object>
