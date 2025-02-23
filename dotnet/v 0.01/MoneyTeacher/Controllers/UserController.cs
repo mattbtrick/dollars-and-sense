@@ -1,4 +1,5 @@
 ﻿using Interfaces.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
@@ -8,6 +9,7 @@ namespace MoneyTeacher.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
@@ -15,8 +17,10 @@ namespace MoneyTeacher.Controllers
         {
             _userRepository = userRepository;
         }
+
         // GET: api/<UserController>
         [HttpGet]
+        [Authorize]
         public IEnumerable<User> Get()
         {
             return _userRepository.GetAll();

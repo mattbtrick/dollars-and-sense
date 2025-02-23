@@ -1,7 +1,7 @@
 using Interfaces.IRepository;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Data.SqlClient;
+using Microsoft.OpenApi.Models;
 using Repository;
 using System.Data;
 
@@ -12,32 +12,45 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options =>
-        {
-            options.ExpireTimeSpan = TimeSpan.FromHours(10);
-            //options.LoginPath = "/Auth/Login";
-            //options.AccessDeniedPath = "/Auth/AccessDenied";
-        });
-
-builder.Services.AddAuthentication(
-    options =>
-    {
-        options.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-    }
-    ).AddGoogle(googleOptions =>
+builder.Services.AddSwaggerGen(c =>
 {
-    googleOptions.ClientId = "";
-    googleOptions.ClientSecret = "";
+    // Configure Bearer authentication in Swagger UI
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer {your token}' in the field below."
+    });
+
+    // Make Swagger apply the security globally
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {} // No specific scopes required
+        }
+    });
 });
+
+builder.Services.AddAuthentication("GoogleAuthScheme")
+    .AddScheme<AuthenticationSchemeOptions, GoogleAuthenticationHandler>("GoogleAuthScheme", null);
 
 builder.Services.AddScoped<IDbConnection>(s => { return new SqlConnection(builder.Configuration.GetConnectionString("db")); });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -48,9 +61,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//app.UseAuthorization();
-app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
