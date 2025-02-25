@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+  import TheWelcome from './components/TheWelcome.vue'
+  import GoogleLogin from './components/GoogleLogin.vue'
+ 
 </script>
 
 <template>
@@ -9,6 +11,7 @@ import TheWelcome from './components/TheWelcome.vue'
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
+      <GoogleLogin />
     </div>
   </header>
 
